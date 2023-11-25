@@ -8,13 +8,11 @@ import Models.BugM;
 import Models.UserM;
 import User.User;
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.imageio.ImageIO;
-import static javax.management.Query.value;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import utils.SessionStorage;
 
@@ -32,20 +30,21 @@ public class BugsListJFrame extends javax.swing.JFrame {
         checkAuth();
         initTable();
     }
-    
-    private static void removeAllRows(){
+
+    private static void removeAllRows() {
         int RowSize = jTable1.getRowCount();
-        
+
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        
-        for(int i = 0 ; i < RowSize ; i++) model.removeRow(0);
-         
+
+        for (int i = 0; i < RowSize; i++) {
+            model.removeRow(0);
+        }
+
     }
 
     public static void initTable() {
-        
+
         removeAllRows();
-            
 
         BugM bm = new BugM();
         ResultSet rs;
@@ -74,7 +73,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
             rs.close();
             bm.statement.close();
         } catch (Exception e) {
-    
+
             messages.JFrameMessage.showErr(e);
         }
 
@@ -97,9 +96,10 @@ public class BugsListJFrame extends javax.swing.JFrame {
         if (userRs.next()) {
             testerName = userRs.getString("name");
         }
+        
+        if(userRs.getInt("id") == ((User) SessionStorage.getData()).getID()) testerName = "You";
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-
 
         model.addRow(new Object[]{rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getString("priority"), rs.getString("level"), devName, testerName, rs.getString("date"), rs.getString("img"), rs.getBoolean("status")});
 
@@ -308,16 +308,30 @@ public class BugsListJFrame extends javax.swing.JFrame {
             if (chStatBtn.getParent() != null) {
                 chStatBtn.setEnabled(true);
             }
-            if(updateBtn.getParent() != null){
+            if (updateBtn.getParent() != null) {
                 updateBtn.setEnabled(true);
             }
+        } else if (evt.getClickCount() == 2) {
+
+            String imagePath = "Images\\" + (String) jTable1.getValueAt(jTable1.getSelectedRow(), 8);
+
+            ImageIcon originalIcon = new ImageIcon(imagePath);
+
+            Image originalImage = originalIcon.getImage();
+            
+            System.out.println(originalImage);
+
+            Image scaledImage = originalImage.getScaledInstance(300, 200, Image.SCALE_SMOOTH);
+
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+            JOptionPane.showMessageDialog(null, scaledIcon, "Image Viewer", JOptionPane.PLAIN_MESSAGE);
         }
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void creatBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_creatBtnMouseClicked
 
         new bugJframe(null).setVisible(true);
-        
         ;
 
     }//GEN-LAST:event_creatBtnMouseClicked
@@ -341,31 +355,35 @@ public class BugsListJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_chStatBtnMouseClicked
 
     private void updateBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateBtnMouseClicked
-        
+
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         int sRow = jTable1.getSelectedRow();
-      
-        if(sRow == -1) return;
-        
-        int bugId = (int)jTable1.getValueAt(sRow, 0);
-        
+
+        if (sRow == -1) {
+            return;
+        }
+
+        int bugId = (int) jTable1.getValueAt(sRow, 0);
+
         int devId;
-        
+
         BugM bm = new BugM();
-        
-        
-        try{
+
+        try {
             ResultSet rs = bm.getById(bugId);
-            
+
             rs.next();
             
+            if(rs.getInt("tester_id") != ((User) SessionStorage.getData()).getID()){
+                updateBtn.setEnabled(false);
+                return;
+            }
+
             devId = rs.getInt("developer_id");
-            
+
             new bugJframe(rs).setVisible(true);
-            
-            
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             messages.JFrameMessage.showErr(e);
         }
     }//GEN-LAST:event_updateBtnMouseClicked

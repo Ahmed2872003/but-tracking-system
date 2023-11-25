@@ -324,6 +324,9 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
 
         int sRow = jTable1.getSelectedRow();
 
+        String deletedRole = (String)jTable1.getValueAt(sRow, 3);
+        
+        
         if (deleteBtn.isEnabled() && !jTable1.getValueAt(sRow, 3).equals("Admin")) {
             try {
 
@@ -332,11 +335,13 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
 
                 int sRowProject = ProjectsListJFrame.jTable1.getSelectedRow();
 
-                int devId = (int) jTable1.getValueAt(sRow, 0);
+                int deletedID = (int) jTable1.getValueAt(sRow, 0);
                 
-                um.deleteFromProject(devId, (int) ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0));
-                
-                bm.update("developer_id = null", "developer_id="+devId);
+                um.deleteFromProject(deletedID, (int) ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0));
+                if(deletedRole.equals("Developer"))
+                    bm.update("developer_id = null", "developer_id="+deletedID);
+                else if(deletedRole.equals("Tester"))
+                    bm.delete("tester_id="+deletedID);
 
                 model.removeRow(sRow);
 
