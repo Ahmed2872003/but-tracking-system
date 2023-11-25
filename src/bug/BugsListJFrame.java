@@ -96,8 +96,10 @@ public class BugsListJFrame extends javax.swing.JFrame {
         if (userRs.next()) {
             testerName = userRs.getString("name");
         }
-        
-        if(userRs.getInt("id") == ((User) SessionStorage.getData()).getID()) testerName = "You";
+
+        if (userRs.getInt("id") == ((User) SessionStorage.getData()).getID()) {
+            testerName = "You";
+        }
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
@@ -318,8 +320,6 @@ public class BugsListJFrame extends javax.swing.JFrame {
             ImageIcon originalIcon = new ImageIcon(imagePath);
 
             Image originalImage = originalIcon.getImage();
-            
-            System.out.println(originalImage);
 
             Image scaledImage = originalImage.getScaledInstance(300, 200, Image.SCALE_SMOOTH);
 
@@ -373,8 +373,8 @@ public class BugsListJFrame extends javax.swing.JFrame {
             ResultSet rs = bm.getById(bugId);
 
             rs.next();
-            
-            if(rs.getInt("tester_id") != ((User) SessionStorage.getData()).getID()){
+
+            if (rs.getInt("tester_id") != ((User) SessionStorage.getData()).getID()) {
                 updateBtn.setEnabled(false);
                 return;
             }
