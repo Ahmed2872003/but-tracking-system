@@ -11,13 +11,11 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utils.SessionStorage;
 import Models.*;
-import java.io.IOException;
 import java.sql.ResultSet;
-import javax.swing.table.DefaultTableModel;
 import messages.JFrameMessage;
 import java.nio.file.*;
-import java.util.UUID;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -28,11 +26,53 @@ public class bugJframe extends javax.swing.JFrame {
     /**
      * Creates new form bugJframe
      */
-    public bugJframe() {
+    public bugJframe(ResultSet bugDetails){
         initComponents();
+        
         initTable();
+        
+        if(bugDetails != null){
+            jPanel2.remove(createBtn);
+            fillFields(bugDetails);
+        }else
+            jPanel2.remove(updateBtn);
+        
+        
     }
 
+    private void fillFields(ResultSet bugDetails){
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        
+        try{
+            nameField.setText(bugDetails.getString("name"));
+        
+            typeComBox.setSelectedItem(bugDetails.getString("type"));
+        
+            priorityComBox.setSelectedItem(bugDetails.getString("priority"));
+        
+            lvlComBox.setSelectedItem(bugDetails.getString("level"));
+        
+            imgPathField.setText(bugDetails.getString("img"));
+            
+            
+            
+            for(int i = 0 ; i < jTable1.getRowCount() ; i++){
+                int devId = (int)jTable1.getValueAt(i, 0);
+                
+                
+                
+                if(String.valueOf(devId).equals(bugDetails.getString("developer_id"))){
+                    jTable1.setRowSelectionInterval(i, i);
+                    break;
+                }
+            }
+        }catch(Exception e){
+            messages.JFrameMessage.showErr(e);
+        }
+        
+    }
+    
+    
     public void initTable() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
@@ -83,13 +123,15 @@ public class bugJframe extends javax.swing.JFrame {
         priorityComBox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         lvlComBox = new javax.swing.JComboBox<>();
-        createBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         imgPathField = new javax.swing.JTextField();
         selectBtn = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        createBtn = new javax.swing.JButton();
+        updateBtn = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
 
@@ -130,18 +172,6 @@ public class bugJframe extends javax.swing.JFrame {
         jLabel4.setText("Level");
 
         lvlComBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Low", "Minor", "Major", "Critical" }));
-
-        createBtn.setText("Create");
-        createBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                createBtnMouseClicked(evt);
-            }
-        });
-        createBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createBtnActionPerformed(evt);
-            }
-        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -187,27 +217,67 @@ public class bugJframe extends javax.swing.JFrame {
             }
         });
 
+        createBtn.setText("Create");
+        createBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createBtnMouseClicked(evt);
+            }
+        });
+        createBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createBtnActionPerformed(evt);
+            }
+        });
+
+        updateBtn.setText("Update");
+        updateBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updateBtnMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(updateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(updateBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(createBtn)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nameField)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(typeComBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(priorityComBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lvlComBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(imgPathField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(selectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(56, 56, 56)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(nameField)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(typeComBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(priorityComBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lvlComBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(imgPathField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(selectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(54, 54, 54)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
@@ -221,6 +291,9 @@ public class bugJframe extends javax.swing.JFrame {
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -241,10 +314,9 @@ public class bugJframe extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(imgPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(selectBtn))
-                        .addGap(48, 48, 48)
-                        .addComponent(createBtn))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -252,16 +324,16 @@ public class bugJframe extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(20, Short.MAX_VALUE)
+                .addContainerGap(17, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(20, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         pack();
@@ -298,11 +370,10 @@ public class bugJframe extends javax.swing.JFrame {
 
     private void createBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createBtnMouseClicked
         if (validateData()) {
+
+            String destImgName = utils.GenUniqueFName.generate(imgPathField.getText());
+            
             Path srcImgPath = Paths.get(imgPathField.getText());
-
-            String[] fNameWExt = srcImgPath.getFileName().toString().split("\\.");
-
-            String destImgName = fNameWExt[0] + '-' + UUID.randomUUID().toString() + '.' + fNameWExt[1];
             
             Path destImgPath = Paths.get("Images\\" + destImgName);
 
@@ -341,6 +412,69 @@ public class bugJframe extends javax.swing.JFrame {
         } else
             messages.JFrameMessage.showErr(new Exception("Ensure that all fields are filled"));
     }//GEN-LAST:event_createBtnMouseClicked
+
+    private void updateBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateBtnMouseClicked
+        if(validateData()){
+            
+            JTable bugsTable =  BugsListJFrame.jTable1;
+            
+            int bugId = (int)bugsTable.getValueAt(bugsTable.getSelectedRow(), 0);
+            
+            int devId = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
+            
+            String destImgName = imgPathField.getText();
+            
+            Path oldPath = Paths.get("Images\\"+bugsTable.getValueAt(bugsTable.getSelectedRow(), 8));
+            
+            boolean isImgSame = destImgName.equals(oldPath.getFileName().toString());
+            
+            if(!isImgSame){
+                destImgName = utils.GenUniqueFName.generate(destImgName);
+            }
+            
+            try{
+                BugM bm = new BugM();
+                
+                String newData = "name='"+nameField.getText()+"',type='"+typeComBox.getSelectedItem().toString()+"',priority='"+priorityComBox.getSelectedItem().toString()+"',level='"+lvlComBox.getSelectedItem().toString()+"',img='"+destImgName+"',developer_id="+devId;
+                
+                bm.update(newData, "id="+ bugId);
+               
+                
+                if(!isImgSame){
+                    Path srcPath = Paths.get(imgPathField.getText());
+                    Path destPath = Paths.get("Images\\"+destImgName);
+                    
+                    Files.deleteIfExists(oldPath);
+                
+                    Files.copy(srcPath, destPath);
+                }
+                
+            BugsListJFrame.initTable();
+                
+            JOptionPane.showMessageDialog(null, "Updated successfully", "Updated", JOptionPane.INFORMATION_MESSAGE);
+
+            BugsListJFrame.updateBtn.setEnabled(false);
+            
+            this.dispose();
+                
+            
+            
+            
+                
+            bm.statement.close();
+            
+                
+                
+            }catch(Exception e){
+                messages.JFrameMessage.showErr(e);
+            }
+            
+            
+            
+        }else{
+            messages.JFrameMessage.showErr(new Exception("Ensure that all fields are filled"));
+        }
+    }//GEN-LAST:event_updateBtnMouseClicked
 
     private boolean validateData() {
         if (nameField.getText().isEmpty() || imgPathField.getText().isEmpty() || jTable1.getSelectedRow() == -1) {
@@ -390,7 +524,7 @@ public class bugJframe extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new bugJframe().setVisible(true);
+                new bugJframe(null).setVisible(true);
             }
         });
     }
@@ -410,6 +544,7 @@ public class bugJframe extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
@@ -420,5 +555,6 @@ public class bugJframe extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> priorityComBox;
     private javax.swing.JButton selectBtn;
     private javax.swing.JComboBox<String> typeComBox;
+    private javax.swing.JButton updateBtn;
     // End of variables declaration//GEN-END:variables
 }

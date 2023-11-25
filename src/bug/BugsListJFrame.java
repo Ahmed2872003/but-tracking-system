@@ -32,8 +32,20 @@ public class BugsListJFrame extends javax.swing.JFrame {
         checkAuth();
         initTable();
     }
+    
+    private static void removeAllRows(){
+        int RowSize = jTable1.getRowCount();
+        
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        
+        for(int i = 0 ; i < RowSize ; i++) model.removeRow(0);
+         
+    }
 
-    public void initTable() {
+    public static void initTable() {
+        
+        removeAllRows();
+            
 
         BugM bm = new BugM();
         ResultSet rs;
@@ -104,6 +116,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
             }
             case "Developer": {
                 jPanel2.remove(creatBtn);
+                jPanel2.remove(updateBtn);
                 break;
             }
             default: {
@@ -126,12 +139,37 @@ public class BugsListJFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialog1 = new javax.swing.JDialog();
+        jDialog2 = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         creatBtn = new javax.swing.JButton();
         chStatBtn = new javax.swing.JButton();
+        updateBtn = new javax.swing.JButton();
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jDialog2Layout = new javax.swing.GroupLayout(jDialog2.getContentPane());
+        jDialog2.getContentPane().setLayout(jDialog2Layout);
+        jDialog2Layout.setHorizontalGroup(
+            jDialog2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jDialog2Layout.setVerticalGroup(
+            jDialog2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Bugs");
@@ -186,15 +224,25 @@ public class BugsListJFrame extends javax.swing.JFrame {
             }
         });
 
+        updateBtn.setText("Update");
+        updateBtn.setEnabled(false);
+        updateBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updateBtnMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(chStatBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(creatBtn)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(updateBtn)
+                .addContainerGap(61, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,7 +250,8 @@ public class BugsListJFrame extends javax.swing.JFrame {
                 .addGap(27, 27, 27)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(creatBtn)
-                    .addComponent(chStatBtn))
+                    .addComponent(chStatBtn)
+                    .addComponent(updateBtn))
                 .addGap(0, 0, 0))
         );
 
@@ -259,12 +308,17 @@ public class BugsListJFrame extends javax.swing.JFrame {
             if (chStatBtn.getParent() != null) {
                 chStatBtn.setEnabled(true);
             }
+            if(updateBtn.getParent() != null){
+                updateBtn.setEnabled(true);
+            }
         }
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void creatBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_creatBtnMouseClicked
 
-        new bugJframe().setVisible(true);
+        new bugJframe(null).setVisible(true);
+        
+        ;
 
     }//GEN-LAST:event_creatBtnMouseClicked
 
@@ -285,6 +339,36 @@ public class BugsListJFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_chStatBtnMouseClicked
+
+    private void updateBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateBtnMouseClicked
+        
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        int sRow = jTable1.getSelectedRow();
+      
+        if(sRow == -1) return;
+        
+        int bugId = (int)jTable1.getValueAt(sRow, 0);
+        
+        int devId;
+        
+        BugM bm = new BugM();
+        
+        
+        try{
+            ResultSet rs = bm.getById(bugId);
+            
+            rs.next();
+            
+            devId = rs.getInt("developer_id");
+            
+            new bugJframe(rs).setVisible(true);
+            
+            
+            
+        }catch(Exception e){
+            messages.JFrameMessage.showErr(e);
+        }
+    }//GEN-LAST:event_updateBtnMouseClicked
 
     /**
      * @param args the command line arguments
@@ -325,9 +409,12 @@ public class BugsListJFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton chStatBtn;
     private javax.swing.JButton creatBtn;
+    private javax.swing.JDialog jDialog1;
+    private javax.swing.JDialog jDialog2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     public static javax.swing.JTable jTable1;
+    public static javax.swing.JButton updateBtn;
     // End of variables declaration//GEN-END:variables
 }
