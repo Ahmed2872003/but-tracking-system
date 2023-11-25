@@ -6,7 +6,7 @@ package User;
 
 import Models.UserM;
 import javax.swing.JOptionPane;
-import utils.EmailValidation;
+import utils.Email;
 import java.sql.*;
 
 /**
@@ -196,7 +196,7 @@ public class CreateUserJFrame extends javax.swing.JFrame {
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
 
         try{
-            if(!EmailValidation.validate(emailField.getText()))
+            if(!Email.validate(emailField.getText()))
                 throw new Exception("Enter a valid email");
 
             if(!String.valueOf(passField.getPassword()).equals(String.valueOf(re_enterPassField.getPassword())))

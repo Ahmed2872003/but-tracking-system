@@ -399,7 +399,10 @@ public class bugJframe extends javax.swing.JFrame {
                 Files.copy(srcImgPath, destImgPath);
                 
                 JOptionPane.showMessageDialog(this, "Added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
-            
+                
+                // Send email to inform the developer about Bug details
+                
+                
                 resetFields();
                 
                 rs.close();

@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author ahmed
  */
-public class User implements Serializable{
+public class User{
     
     private Integer id = null;
     private String name = null;

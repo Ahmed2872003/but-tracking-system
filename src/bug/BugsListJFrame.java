@@ -321,7 +321,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
             Image originalImage = originalIcon.getImage();
 
-            Image scaledImage = originalImage.getScaledInstance(300, 200, Image.SCALE_SMOOTH);
+            Image scaledImage = originalImage.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH);
 
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
@@ -332,7 +332,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
     private void creatBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_creatBtnMouseClicked
 
         new bugJframe(null).setVisible(true);
-        ;
+        
 
     }//GEN-LAST:event_creatBtnMouseClicked
 
